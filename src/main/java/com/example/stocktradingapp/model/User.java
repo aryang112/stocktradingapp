@@ -17,15 +17,16 @@ public class User {
     
     private String firstName;
     private String lastName;
-    private String status;
+    private UserStatus status;
     private String ssn;
     private LocalDate dateOfBirth;
+
 
 
     public User() {
     }
 
-    public User(UUID Id, String firstName, String lastName, String status, String ssn, LocalDate dateOfBirth) {
+    public User(UUID Id, String firstName, String lastName, UserStatus status, String ssn, LocalDate dateOfBirth) {
         this.Id = Id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -58,11 +59,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getStatus() {
+    public UserStatus getStatus() {
         return this.status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
 
@@ -97,7 +98,7 @@ public class User {
         return this;
     }
 
-    public User status(String status) {
+    public User status(UserStatus status) {
         setStatus(status);
         return this;
     }
@@ -139,7 +140,7 @@ public class User {
             ", dateOfBirth='" + getDateOfBirth() + "'" +
             "}";
     }
-
+    
     
     
 }

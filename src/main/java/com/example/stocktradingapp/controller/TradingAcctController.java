@@ -9,11 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.stocktradingapp.dto.TradingAccountRequestDTO;
 import com.example.stocktradingapp.dto.TradingAccountResponseDTO;
+import com.example.stocktradingapp.dto.UpdateBalanceRequestDTO;
 import com.example.stocktradingapp.dto.UserRequestDTO;
 import com.example.stocktradingapp.dto.UserResponseDTO;
 import com.example.stocktradingapp.http.ResponseEntityFactory;
@@ -74,5 +76,24 @@ public class TradingAcctController {
     
     }
 
+    @SuppressWarnings("unchecked")
+    @PutMapping(value = "/updateTradingAccount/{userId}",
+    produces = {"application/json"})
+    public ResponseEntity<TradingAccountResponseDTO> updateTradingAccount(@PathVariable UUID userId,
+    @RequestBody UpdateBalanceRequestDTO updateBalanceRequestDTO) {        
+                
+        if (!tradingAccountService.isDTOValid(updateBalanceRequestDTO)) {
+            return responseEntityFactory.create(HttpStatus.BAD_REQUEST);
+        }
+
+        if (!tradingAccountService.doesUserHaveTradingAccount(userId)) {
+
+            return responseEntityFactory.create(HttpStatus.NOT_FOUND); 
+        }
+
+        TradingAccountResponseDTO tradingAccountResponseDTO = tradingAccountService.updateBalance(userId, updateBalanceRequestDTO);
+        
+        return responseEntityFactory.create(tradingAccountResponseDTO, HttpStatus.OK);
+    }
     
 }
