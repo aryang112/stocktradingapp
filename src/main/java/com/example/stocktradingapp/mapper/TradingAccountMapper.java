@@ -20,4 +20,6 @@ public interface TradingAccountMapper {
     TradingAccount toEntity(TradingAccountResponseDTO tradingAccountResponseDTO);
     TradingAccountResponseDTO toResponseDTO(TradingAccount tradingAccount);
 
+    TradingAccount toEntity(TradingAccountRequestDTO tradingAccountRequestDTO);
+
 }

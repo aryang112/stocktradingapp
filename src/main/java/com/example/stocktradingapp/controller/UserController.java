@@ -55,9 +55,9 @@ public class UserController {
     @SuppressWarnings("unchecked")
     @GetMapping(value = "/readUser/{Id}",
     produces = ("application/json"))
-    public ResponseEntity<UserResponseDTO> readStudent(@PathVariable UUID Id) {
+    public ResponseEntity<UserResponseDTO> readUser(@PathVariable UUID Id) {
 
-        UserResponseDTO userResponseDTO = userService.getStudent(Id);
+        UserResponseDTO userResponseDTO = userService.getUser(Id);
 
         if (userResponseDTO == null) {
             return responseEntityFactory.create(HttpStatus.NOT_FOUND);

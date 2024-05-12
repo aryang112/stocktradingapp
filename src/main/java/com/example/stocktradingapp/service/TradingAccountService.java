@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import com.example.stocktradingapp.dto.TradingAccountRequestDTO;
 import com.example.stocktradingapp.dto.TradingAccountResponseDTO;
+import com.example.stocktradingapp.dto.UserResponseDTO;
 import com.example.stocktradingapp.mapper.TradingAccountMapper;
 import com.example.stocktradingapp.model.TradingAccount;
 import com.example.stocktradingapp.model.User;
@@ -43,14 +44,14 @@ public class TradingAccountService {
 
     public TradingAccountResponseDTO createTradingAccount(TradingAccountRequestDTO tradingAccountRequestDTO) {
         
+        TradingAccount tradingAccount = tradingAccountMapper.toEntity(tradingAccountRequestDTO);
+        tradingAccount.setUpdatedAt(LocalDateTime.now());
+
         User user = userRespository.findById(tradingAccountRequestDTO.getUserId())
         .orElseThrow();
         String Id = SimpleIdGenerator.generateId();
 
-        TradingAccount tradingAccount = new TradingAccount();
-
         tradingAccount.setUser(user);
-        tradingAccount.setUpdatedAt(LocalDateTime.now());
         tradingAccount.setBalance(tradingAccountRequestDTO.getBalance());
         tradingAccount.setId(Id);
         
@@ -66,6 +67,29 @@ public class TradingAccountService {
     public boolean doesUserExist(UUID userId) {
         Optional<User> userOptional = userRespository.findById(userId);
         return userOptional.isPresent();
+    }
+
+    public boolean doesUserHaveTradingAccount(UUID userId) {
+        
+        Optional<TradingAccount> tradingAccountOptional = tradingAccountRepository.findByUserId(userId);
+        return tradingAccountOptional.isPresent();
+    }
+
+    public TradingAccountResponseDTO getTradingAccount(UUID userId) {
+        
+    Optional<TradingAccount> tradingAccountOptional = tradingAccountRepository.findByUserId(userId);
+    TradingAccountResponseDTO tradingAccountResponseDTO = null;
+
+    if (tradingAccountOptional.isPresent()) {
+        tradingAccountResponseDTO = new TradingAccountResponseDTO();
+        TradingAccount tradingAccount = tradingAccountOptional.get();
+
+        //mapping
+        tradingAccountResponseDTO = tradingAccountMapper.toResponseDTO(tradingAccount);
+        tradingAccountResponseDTO.setUserId(userId);
+    }
+        
+    return tradingAccountResponseDTO;
     }
 
 

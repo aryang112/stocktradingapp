@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.example.stocktradingapp.dto.TradingAccountRequestDTO;
+import com.example.stocktradingapp.dto.TradingAccountResponseDTO;
 import com.example.stocktradingapp.dto.UserRequestDTO;
 import com.example.stocktradingapp.dto.UserResponseDTO;
 import com.example.stocktradingapp.mapper.UserMapper;
 import com.example.stocktradingapp.model.User;
 import com.example.stocktradingapp.model.UserStatus;
 import com.example.stocktradingapp.repository.UserRespository;
+
+import jakarta.transaction.Transactional;
 
 
 @Service
@@ -23,8 +27,11 @@ public class UserService {
     private UserRespository userRespository;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private TradingAccountService tradingAccountService;
 
 
+    @Transactional
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
         
         UserResponseDTO userResponseDTO = UserMapper.INSTANCE.requestToResponseDTO(userRequestDTO);
@@ -35,6 +42,14 @@ public class UserService {
         User user = UserMapper.INSTANCE.toEntity(userResponseDTO);
 
         userRespository.save(user);
+
+        //Calling to create a Trading Account
+        TradingAccountRequestDTO tradingAccountRequestDTO = new TradingAccountRequestDTO();
+        tradingAccountRequestDTO.setUserId(user.getId());
+        tradingAccountRequestDTO.setBalance(0);
+        
+        tradingAccountService.createTradingAccount(tradingAccountRequestDTO);
+
         return userResponseDTO;
         
     }
@@ -55,7 +70,7 @@ public class UserService {
         return userOptional.isPresent();
     }
 
-    public UserResponseDTO getStudent(UUID Id) {
+    public UserResponseDTO getUser(UUID Id) {
         
         Optional<User> userOptional = userRespository.findById(Id);
         UserResponseDTO userResponseDTO = null;
