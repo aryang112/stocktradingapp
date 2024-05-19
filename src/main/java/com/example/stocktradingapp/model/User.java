@@ -3,6 +3,8 @@ package com.example.stocktradingapp.model;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -17,6 +19,7 @@ public class User {
     
     private String firstName;
     private String lastName;
+    @Enumerated(EnumType.STRING)
     private UserStatus status;
     private String ssn;
     private LocalDate dateOfBirth;

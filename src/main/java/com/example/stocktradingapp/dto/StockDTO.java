@@ -28,6 +28,23 @@ public class StockDTO {
 
     private String changePercent;
 
+
+    public StockDTO() {
+    }
+
+    public StockDTO(String symbol, String open, String high, String low, String price, String volume, String latestTradingDay, String previousClose, String change, String changePercent) {
+        this.symbol = symbol;
+        this.open = open;
+        this.high = high;
+        this.low = low;
+        this.price = price;
+        this.volume = volume;
+        this.latestTradingDay = latestTradingDay;
+        this.previousClose = previousClose;
+        this.change = change;
+        this.changePercent = changePercent;
+    }
+
     public String getSymbol() {
         return this.symbol;
     }
@@ -106,6 +123,88 @@ public class StockDTO {
 
     public void setChangePercent(String changePercent) {
         this.changePercent = changePercent;
+    }
+
+    public StockDTO symbol(String symbol) {
+        setSymbol(symbol);
+        return this;
+    }
+
+    public StockDTO open(String open) {
+        setOpen(open);
+        return this;
+    }
+
+    public StockDTO high(String high) {
+        setHigh(high);
+        return this;
+    }
+
+    public StockDTO low(String low) {
+        setLow(low);
+        return this;
+    }
+
+    public StockDTO price(String price) {
+        setPrice(price);
+        return this;
+    }
+
+    public StockDTO volume(String volume) {
+        setVolume(volume);
+        return this;
+    }
+
+    public StockDTO latestTradingDay(String latestTradingDay) {
+        setLatestTradingDay(latestTradingDay);
+        return this;
+    }
+
+    public StockDTO previousClose(String previousClose) {
+        setPreviousClose(previousClose);
+        return this;
+    }
+
+    public StockDTO change(String change) {
+        setChange(change);
+        return this;
+    }
+
+    public StockDTO changePercent(String changePercent) {
+        setChangePercent(changePercent);
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof StockDTO)) {
+            return false;
+        }
+        StockDTO stockDTO = (StockDTO) o;
+        return Objects.equals(symbol, stockDTO.symbol) && Objects.equals(open, stockDTO.open) && Objects.equals(high, stockDTO.high) && Objects.equals(low, stockDTO.low) && Objects.equals(price, stockDTO.price) && Objects.equals(volume, stockDTO.volume) && Objects.equals(latestTradingDay, stockDTO.latestTradingDay) && Objects.equals(previousClose, stockDTO.previousClose) && Objects.equals(change, stockDTO.change) && Objects.equals(changePercent, stockDTO.changePercent);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(symbol, open, high, low, price, volume, latestTradingDay, previousClose, change, changePercent);
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " symbol='" + getSymbol() + "'" +
+            ", open='" + getOpen() + "'" +
+            ", high='" + getHigh() + "'" +
+            ", low='" + getLow() + "'" +
+            ", price='" + getPrice() + "'" +
+            ", volume='" + getVolume() + "'" +
+            ", latestTradingDay='" + getLatestTradingDay() + "'" +
+            ", previousClose='" + getPreviousClose() + "'" +
+            ", change='" + getChange() + "'" +
+            ", changePercent='" + getChangePercent() + "'" +
+            "}";
     }
 
 
