@@ -92,7 +92,7 @@ mvn spring-boot:run
 
 ## About
 
-This backend application is part of a stock trading app project aimed at showcasing skills in Spring Boot development, API integration, and data validation. Future enhancements include more advanced trading features and portfolio management.
+This backend application is part of a stock trading app project in Spring Boot development, API integration, and data validation. Future enhancements include more advanced trading features and portfolio management.
 
 ### Resources
 
