@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.swing.text.html.Option;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
@@ -43,12 +45,16 @@ public class TradeService {
     @Autowired
     UserRespository userRespository;
 
-    public TradeResponseDTO executeTrade(TradeRequestDTO tradeRequestDTO) {
+    public TradeResponseDTO executeTrade(TradeRequestDTO tradeRequestDTO) throws Exception {
+        
         
         StockDTO stockDTO = stockService.getStockPrice(tradeRequestDTO.getSymbol());
+
+        
         Optional<TradingAccount> tradingAccountOptional = tradingAccountRepository.findByUserId(tradeRequestDTO.getUserId());
         User user = userRespository.findById(tradeRequestDTO.getUserId())
         .orElseThrow();
+        //Optional<TradeHoldings> tradeHoldings = tradeHoldingsRepository.findByUserId(tradeRequestDTO.getUserId());
 
         
         if (!tradingAccountOptional.isPresent()) {
@@ -56,9 +62,7 @@ public class TradeService {
             return tradeResponseDTO;
     }
     TradingAccountResponseDTO tradingAccountResponseDTO = new TradingAccountResponseDTO();
-    TradingAccount tradingAccount = tradingAccountOptional.get();
-
-    
+    TradingAccount tradingAccount = tradingAccountOptional.get();    
     //mapping
     tradingAccountResponseDTO = tradingAccountMapper.toResponseDTO(tradingAccount);
 
@@ -70,6 +74,9 @@ public class TradeService {
         
         return new TradeResponseDTO();
     }
+    TradeHoldings tradeHoldings = tradeHoldingsRepository.findByUserIdAndSymbol(tradeRequestDTO.getUserId(), tradeRequestDTO.getSymbol())
+    .orElse(null);
+    
     TradeResponseDTO tradeResponseDTO = new TradeResponseDTO();
     tradeResponseDTO.setUserId(tradeRequestDTO.getUserId());
     tradeResponseDTO.setSymbol(tradeRequestDTO.getSymbol());
@@ -94,11 +101,15 @@ public class TradeService {
     if (TradeType.Buy.equals(tradeRequestDTO.getTradeType())) {
 
         revisedBalance = accountBalance - totalAmount;
+
+        handleBuyTrade(user, tradeRequestDTO, stockDTO);
     }
 
     if (TradeType.Sell.equals(tradeRequestDTO.getTradeType())) {
         
         revisedBalance = accountBalance - totalAmount;
+
+        handleSellTrade(user, tradeRequestDTO, stockDTO);
 
     }
 
@@ -162,6 +173,56 @@ public class TradeService {
 
         return false;
     }
+
+    public void handleBuyTrade(User user, TradeRequestDTO tradeRequestDTO, StockDTO stockDTO) {
+        // Check if a holding exists for the user and symbol
+        Optional<TradeHoldings> existingHolding = tradeHoldingsRepository.findByUserIdAndSymbol(user.getId(), tradeRequestDTO.getSymbol());
+    
+        if (existingHolding.isPresent()) {
+            // Update the existing holding
+            TradeHoldings holding = existingHolding.get();
+            holding.setQuantity(holding.getQuantity() + tradeRequestDTO.getQuantity());
+            tradeHoldingsRepository.save(holding);
+        } else {
+            // Create a new holding
+            TradeHoldings newHolding = new TradeHoldings();
+            newHolding.setUser(user);
+            newHolding.setSymbol(tradeRequestDTO.getSymbol());
+            newHolding.setQuantity(tradeRequestDTO.getQuantity());
+            tradeHoldingsRepository.save(newHolding);
+        }
+    }
+
+    public void handleSellTrade(User user, TradeRequestDTO tradeRequestDTO, StockDTO stockDTO) throws Exception {
+        // Check if a holding exists for the user and symbol
+        Optional<TradeHoldings> existingHolding = tradeHoldingsRepository.findByUserIdAndSymbol(user.getId(), tradeRequestDTO.getSymbol());
+    
+        if (existingHolding.isPresent()) {
+            TradeHoldings holding = existingHolding.get();
+            int currentQuantity = holding.getQuantity();
+            
+            if (currentQuantity >= tradeRequestDTO.getQuantity()) {
+                // Update the existing holding
+                holding.setQuantity(currentQuantity - tradeRequestDTO.getQuantity());
+                
+                if (holding.getQuantity() == 0) {
+                    // Optionally, delete the holding if quantity becomes zero
+                    tradeHoldingsRepository.delete(holding);
+                } else {
+                    // Save the updated holding
+                    tradeHoldingsRepository.save(holding);
+                }
+            } else {
+                // Handle error: not enough quantity to sell
+                throw new Exception("This exception");
+            }
+        } else {
+            // Handle error: no holdings found for the symbol
+            throw new Exception("No holdings found for the symbol");
+        }
+    }
+    
+    
 }
 
  

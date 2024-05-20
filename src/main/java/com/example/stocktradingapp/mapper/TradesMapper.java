@@ -16,4 +16,6 @@ public interface TradesMapper {
     Trades toEntity(TradeResponseDTO tradeResponseDTO);
 
     
+
+    
 }

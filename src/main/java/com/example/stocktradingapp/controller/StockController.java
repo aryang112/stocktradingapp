@@ -20,6 +20,7 @@ import com.example.stocktradingapp.http.ResponseEntityFactory;
 import com.example.stocktradingapp.service.StockService;
 import com.example.stocktradingapp.service.TradeService;
 
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 
 @RestController
@@ -49,13 +50,16 @@ public class StockController {
 
     @SuppressWarnings("unchecked")
     @PostMapping("/trades/{userId}")
-    public ResponseEntity<TradeResponseDTO> executeTrade(@PathVariable UUID userId,
-    @RequestBody TradeRequestDTO tradeRequestDTO) {
+    public ResponseEntity<TradeResponseDTO> executeTrade(@Valid @PathVariable UUID userId,
+    @RequestBody TradeRequestDTO tradeRequestDTO) throws Exception {
 
 
         TradeResponseDTO tradeResponseDTO = tradeService.executeTrade(tradeRequestDTO);
         
-
+        if (tradeResponseDTO == null) {
+            return responseEntityFactory.create(HttpStatus.BAD_REQUEST);
+            
+        }
         return responseEntityFactory.create(tradeResponseDTO, HttpStatus.CREATED);
     }
 

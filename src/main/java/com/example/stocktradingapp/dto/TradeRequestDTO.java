@@ -2,15 +2,30 @@ package com.example.stocktradingapp.dto;
 
 import java.util.UUID;
 
+import org.aspectj.lang.annotation.RequiredTypes;
+
 import com.example.stocktradingapp.model.TradeType;
+
+import io.micrometer.common.lang.NonNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
+
 import java.util.Objects;
 
 public class TradeRequestDTO {
 
+    @NonNull
+    @NotEmpty
     private UUID userId;
-    String symbol;
-    int quantity;
-    TradeType tradeType;
+    @NonNull
+    @NotEmpty
+    private String symbol;
+    @NonNull
+    @Positive
+    private int quantity;
+    @NotEmpty
+    private TradeType tradeType;
+
 
     public TradeRequestDTO() {
     }

@@ -3,6 +3,7 @@ package com.example.stocktradingapp.service;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,6 +25,7 @@ public class StockService {
         this.restTemplate = new RestTemplate();
     }
 
+    @SuppressWarnings("unchecked")
     public StockDTO getStockPrice(String symbol) {
         
         
@@ -32,9 +34,14 @@ public class StockService {
         .queryParam("symbol", symbol)
         .queryParam("apikey", apiKey)
         .toUriString();
+        
 
         Map<String, Object> response = restTemplate.getForObject(url, Map.class);
         Map<String, Object> globalQuote = (Map<String, Object>) response.get("Global Quote");
+
+        if (globalQuote == null) {
+            throw new RuntimeException("Stock Service is down");
+        }
         
         return mapToStockDTO(globalQuote);
         

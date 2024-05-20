@@ -10,4 +10,6 @@ import com.example.stocktradingapp.model.TradeHoldings;
 public interface TradeHoldingsRepository extends JpaRepository <TradeHoldings,UUID> {
 
     Optional<TradeHoldings> findByUserIdAndSymbol(UUID userId, String symbol);
+
+    Optional<TradeHoldings> findByUserId(UUID userId);
 }
